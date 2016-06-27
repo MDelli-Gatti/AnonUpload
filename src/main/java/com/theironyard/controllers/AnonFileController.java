@@ -40,9 +40,7 @@ public class AnonFileController {
         fos.write(file.getBytes());
 
         AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm);
-        if (files.count() > 9){
-            files.delete(files.findFirstByOrderById());
-        }
+
         files.save(anonFile);
 
         return "redirect:/";

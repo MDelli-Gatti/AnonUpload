@@ -18,6 +18,9 @@ public class AnonFileRestController {
 
     @RequestMapping(path = "/files", method = RequestMethod.GET)
     public Iterable<AnonFile> getFiles(){
+        if (files.count() > 10){
+            files.delete(files.findFirstByOrderById());
+        }
         return files.findAll();
     }
 
