@@ -24,13 +24,14 @@ public class AnonFileController {
     @Autowired
     AnonFileRepository files;
 
+
     @PostConstruct
     public void init() throws SQLException {
         Server.createWebServer().start();
     }
 
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file, String comment, boolean isPerm) throws IOException {
         File dir = new File("public/files");
         dir.mkdirs();
 
@@ -38,7 +39,10 @@ public class AnonFileController {
         FileOutputStream fos = new FileOutputStream(uploadedFile);
         fos.write(file.getBytes());
 
-        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName());
+        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm);
+        if (files.count() > 9){
+            files.delete(files.findFirstByOrderById());
+        }
         files.save(anonFile);
 
         return "redirect:/";

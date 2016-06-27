@@ -7,5 +7,6 @@ import org.springframework.data.repository.CrudRepository;
  * Created by michaeldelli-gatti on 6/27/16.
  */
 public interface AnonFileRepository extends CrudRepository<AnonFile, Integer> {
+    AnonFile findFirstByOrderById();
 
 }
