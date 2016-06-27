@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+
 /**
  * Created by michaeldelli-gatti on 6/27/16.
  */
@@ -18,14 +20,12 @@ public class AnonFileRestController {
 
     @RequestMapping(path = "/files", method = RequestMethod.GET)
     public Iterable<AnonFile> getFiles(){
-        if (files.count() > 10){
-            files.delete(files.findFirstByOrderById());
+
+        ArrayList<AnonFile> nonPermFiles = files.findByIsPermFalseOrderById();
+        if (nonPermFiles.size() > 10){
+            files.delete(nonPermFiles.get(0));
         }
+
         return files.findAll();
     }
-
-//    @RequestMapping(path = "/files/{id}", method = RequestMethod.DELETE)
-//    public void deleteUser(@PathVariable("id") int id){
-//        files.delete(id);
-//    }
 }
