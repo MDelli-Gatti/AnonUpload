@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -23,9 +24,14 @@ public class AnonFileRestController {
 
         ArrayList<AnonFile> nonPermFiles = files.findByIsPermFalseOrderById();
         if (nonPermFiles.size() > 10){
-            files.delete(nonPermFiles.get(0));
+            AnonFile delete = nonPermFiles.get(0);
+            File f = new File("public/files/" + delete.getRealFilename());
+            f.delete();
+            files.delete(delete);
         }
 
         return files.findAll();
     }
+
+
 }

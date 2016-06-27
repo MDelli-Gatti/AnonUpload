@@ -24,15 +24,19 @@ public class AnonFile {
     @Column(nullable = false)
     boolean isPerm;
 
+    @Column
+    String password;
+
 
     public AnonFile() {
     }
 
-    public AnonFile(String originalFilename, String realFilename, String comment, boolean isPerm) {
+    public AnonFile(String originalFilename, String realFilename, String comment, boolean isPerm, String password) {
         this.originalFilename = originalFilename;
         this.realFilename = realFilename;
         this.comment = comment;
         this.isPerm = isPerm;
+        this.password = password;
     }
 
     public int getId() {
@@ -73,5 +77,13 @@ public class AnonFile {
 
     public void setPerm(boolean perm) {
         isPerm = perm;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

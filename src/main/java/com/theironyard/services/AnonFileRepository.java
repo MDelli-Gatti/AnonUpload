@@ -10,4 +10,5 @@ import java.util.ArrayList;
  */
 public interface AnonFileRepository extends CrudRepository<AnonFile, Integer> {
     ArrayList<AnonFile> findByIsPermFalseOrderById();
+    AnonFile findById(Integer id);
 }

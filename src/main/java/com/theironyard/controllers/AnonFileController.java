@@ -2,6 +2,7 @@ package com.theironyard.controllers;
 
 import com.theironyard.entities.AnonFile;
 import com.theironyard.services.AnonFileRepository;
+import com.theironyard.utils.PasswordStorage;
 import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class AnonFileController {
     }
 
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public String upload(MultipartFile file, String comment, boolean isPerm) throws IOException {
+    public String upload(MultipartFile file, String comment, boolean isPerm, String password) throws IOException, PasswordStorage.CannotPerformOperationException {
         File dir = new File("public/files");
         dir.mkdirs();
 
@@ -39,10 +40,26 @@ public class AnonFileController {
         FileOutputStream fos = new FileOutputStream(uploadedFile);
         fos.write(file.getBytes());
 
-        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm);
+            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm, PasswordStorage.createHash(password));
+            files.save(anonFile);
 
-        files.save(anonFile);
 
+        return "redirect:/";
+    }
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
+    public String deleteFile(Integer id, String password) throws Exception {
+        if (password != null){
+
+            AnonFile af = files.findById(id);
+            if (PasswordStorage.verifyPassword(password, af.getPassword())) {
+                File f = new File("public/files/" + af.getRealFilename());
+                f.delete();
+                files.delete(af);
+            }
+        }
+        else {
+            throw new Exception("invalid password");
+        }
         return "redirect:/";
     }
 }
