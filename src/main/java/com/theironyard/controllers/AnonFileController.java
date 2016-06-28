@@ -25,7 +25,6 @@ public class AnonFileController {
     @Autowired
     AnonFileRepository files;
 
-
     @PostConstruct
     public void init() throws SQLException {
         Server.createWebServer().start();
@@ -40,15 +39,13 @@ public class AnonFileController {
         FileOutputStream fos = new FileOutputStream(uploadedFile);
         fos.write(file.getBytes());
 
-            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm, PasswordStorage.createHash(password));
-            files.save(anonFile);
-
+        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comment, isPerm, PasswordStorage.createHash(password));
+        files.save(anonFile);
 
         return "redirect:/";
     }
     @RequestMapping(path = "/delete", method = RequestMethod.POST)
     public String deleteFile(Integer id, String password) throws Exception {
-        if (password != null){
 
             AnonFile af = files.findById(id);
             if (PasswordStorage.verifyPassword(password, af.getPassword())) {
@@ -56,10 +53,10 @@ public class AnonFileController {
                 f.delete();
                 files.delete(af);
             }
-        }
-        else {
-            throw new Exception("invalid password");
-        }
+            else if (!PasswordStorage.verifyPassword(password, af.getPassword())){
+                throw new Exception("Invalid password");
+            }
+
         return "redirect:/";
     }
 }
